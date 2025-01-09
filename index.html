@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+   
+    <link rel="stylesheet" href="styles.css">
+    <title>تحليل المشاعر</title>
+</head>
+<body>
+    <div class="loginsgin">
+        <a href="login.html">
+            <img src="https://static.vecteezy.com/ti/gratis-vector/p1/22123337-gebruiker-icoon-profiel-icoon-account-icoon-log-in-teken-lijn-vector.jpg" width="20px" height="20px">
+        </a>
+    </div>
+
+    <div class="all">
+        <div class="output-container">
+            <h2 id="result">نتيجة التحليل ستظهر هنا</h2>
+        </div>
+        
+        <div class="input-container">
+            <form onsubmit="analyzeSentiment(event)">
+                <input type="text" id="userInput" name="userInput" placeholder="أدخل نص هنا" dir="rtl">
+                <button type="submit">إرسال</button>
+            </form>
+        </div>
+    </div>
+
+    <img src="https://img.freepik.com/premium-vector/ai-logo-template-vector-with-white-background_1023984-15069.jpg" width="40px" height="40px">
+
+    <script>
+        async function analyzeSentiment(event) {
+            event.preventDefault();  
+            const userInput = document.getElementById('userInput').value;
+
+            if (!userInput.trim()) {
+                alert("يرجى إدخال نص للتحليل!");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: userInput })
+                });
+
+                if (!response.ok) {
+                    throw new Error("خطأ في الخادم!");
+                }
+
+                const data = await response.json();
+                const resultElement = document.getElementById('result');
+                resultElement.textContent = `نتيجة التحليل: ${data.sentiment}`;
+            } catch (error) {
+                console.error("Error:", error);
+                alert("حدث خطأ أثناء الاتصال بالخادم.");
+            }
+        }
+    </script>
+</body>
+</html>
